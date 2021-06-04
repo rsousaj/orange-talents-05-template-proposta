@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.zup.orangetalents.proposta.dto.NovaPropostaRequest;
 import br.com.zup.orangetalents.proposta.model.Proposta;
+import br.com.zup.orangetalents.proposta.service.AnaliseCredito;
 import br.com.zup.orangetalents.proposta.service.CriacaoProposta;
 
 @RestController
