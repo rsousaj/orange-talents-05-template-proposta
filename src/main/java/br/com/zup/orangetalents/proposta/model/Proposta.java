@@ -59,6 +59,10 @@ public class Proposta {
 		return this.status;
 	}
 	
+	public void setNaoElegivel() {
+		this.status = StatusProposta.NAO_ELEGIVEL;
+	}
+	
 	public void setStatus(StatusProposta status) {
 		this.status = status;
 	}

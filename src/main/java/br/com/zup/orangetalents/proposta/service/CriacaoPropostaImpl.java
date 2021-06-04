@@ -43,7 +43,7 @@ public class CriacaoPropostaImpl implements CriacaoProposta {
 			ResultadoAnalise resultadoAnalise = analiseCredito.solictaAnalise(SolicitacaoAnaliseRequest.build(proposta));
 			proposta.setStatus(resultadoAnalise.getResultadoSolicitacao().getStatus());		
 		} catch (UnprocessableEntity ex) {
-			proposta.setStatus(StatusProposta.NAO_ELEGIVEL);
+			proposta.setNaoElegivel();
 		}
 		
 		transactionTemplate.execute((status) -> propostaRepository.save(proposta));
