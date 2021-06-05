@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import br.com.zup.orangetalents.proposta.dto.CartaoResponse;
+import br.com.zup.orangetalents.proposta.dto.response.CartaoResponse;
 
 @FeignClient(name = "consultaCartao", url = "${servico.cartoes}")
 public interface ConsultaCartao {
 
 	@RequestMapping(value = "${servico.cartoes.consulta}", method = RequestMethod.GET)
-	CartaoResponse consulta(@RequestParam Long idProposta);
+	CartaoResponse consulta(@RequestParam String idProposta);
 }

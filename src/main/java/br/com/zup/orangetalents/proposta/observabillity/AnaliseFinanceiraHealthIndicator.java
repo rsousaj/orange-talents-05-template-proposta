@@ -20,9 +20,10 @@ public class AnaliseFinanceiraHealthIndicator implements HealthIndicator {
 		webClient = builder.baseUrl(analiseFinanceiraHealthEndpoint).build();
 		this.analiseFinanceiraHealthEndpoint = analiseFinanceiraHealthEndpoint;
 	}
+
 	
 	@Override
-	public Health health() {	
+	public Health health() {
 		Map<String, String> details = new HashMap<>();
 		details.put("service", "analisaFinanceira");
 		details.put("endpoint", analiseFinanceiraHealthEndpoint);
@@ -43,6 +44,5 @@ public class AnaliseFinanceiraHealthIndicator implements HealthIndicator {
 			details.put("reason", ex.getMessage());
 			return Health.down().withDetails(details).build();
 		}
-		
 	}
 }

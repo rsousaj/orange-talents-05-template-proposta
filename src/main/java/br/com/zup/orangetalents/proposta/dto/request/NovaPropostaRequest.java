@@ -1,4 +1,4 @@
-package br.com.zup.orangetalents.proposta.dto;
+package br.com.zup.orangetalents.proposta.dto.request;
 
 import java.math.BigDecimal;
 

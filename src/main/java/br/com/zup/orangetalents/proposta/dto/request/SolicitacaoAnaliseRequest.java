@@ -1,4 +1,4 @@
-package br.com.zup.orangetalents.proposta.dto;
+package br.com.zup.orangetalents.proposta.dto.request;
 
 import br.com.zup.orangetalents.proposta.model.Proposta;
 

@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.zup.orangetalents.proposta.dto.NovaPropostaRequest;
-import br.com.zup.orangetalents.proposta.dto.ResultadoAnalise;
-import br.com.zup.orangetalents.proposta.dto.SolicitacaoAnaliseRequest;
+import br.com.zup.orangetalents.proposta.dto.request.NovaPropostaRequest;
+import br.com.zup.orangetalents.proposta.dto.request.SolicitacaoAnaliseRequest;
+import br.com.zup.orangetalents.proposta.dto.response.ResultadoAnalise;
 import br.com.zup.orangetalents.proposta.exception.ApiException;
 import br.com.zup.orangetalents.proposta.model.Proposta;
 import br.com.zup.orangetalents.proposta.repository.PropostaRepository;
@@ -27,7 +27,7 @@ import feign.FeignException;
 import feign.FeignException.UnprocessableEntity;
 
 @RestController
-@RequestMapping(value = "${proposta.novaproposta.uri}")
+@RequestMapping(value = "${proposta.proposta.uri}")
 public class NovaPropostaController {
 	
 	private final Logger logger = LoggerFactory.getLogger(NovaPropostaController.class);
@@ -46,21 +46,22 @@ public class NovaPropostaController {
 	@PostMapping
 	public ResponseEntity<?> cadastra(@RequestBody @Valid NovaPropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) {	
 		Proposta proposta = criaProposta(propostaRequest);
+		
 		analisaProposta(proposta);
 		propostaRepository.save(proposta);
 		
-		URI uri = uriBuilder.path(detalhePropostaUri).build(proposta.getId());	
+		URI uri = uriBuilder.path(detalhePropostaUri).build(proposta.getId().toString());	
 		return ResponseEntity.created(uri).build();
 	}
 	
 	private Proposta criaProposta(NovaPropostaRequest propostaRequest) {
-		Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
+		 Optional<Proposta> proposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
+		 
+		 if (proposta.isPresent()) {
+			 throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Já existe proposta em análise para o CPF/CNPJ informado.");
+		 }
 		
-		if (possivelProposta.isPresent()) {
-			throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Já existe proposta em análise para o CPF/CNPJ informado.");
-		}
-		
-		return propostaRepository.save(propostaRequest.toModel());
+		 return propostaRepository.save(propostaRequest.toModel());
 	}
 	
 	private void analisaProposta(Proposta proposta) {
@@ -73,6 +74,4 @@ public class NovaPropostaController {
 			logger.error("Ocorreu um erro ao fazer solicitação de análise de credito: {}", ex.getMessage());
 		}
 	}
-	
-	
 }

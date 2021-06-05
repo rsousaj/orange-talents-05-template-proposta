@@ -1,18 +1,20 @@
 package br.com.zup.orangetalents.proposta.model;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import br.com.zup.orangetalents.proposta.validation.CPForCNPJ;
 
@@ -20,8 +22,10 @@ import br.com.zup.orangetalents.proposta.validation.CPForCNPJ;
 public class Proposta {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@Column(name = "id", columnDefinition = "BINARY(16)")
+	private UUID id;
 	
 	private @NotBlank @CPForCNPJ String documento;
 	private @NotBlank String email;
@@ -48,7 +52,7 @@ public class Proposta {
 		this.salario = salario;
 	}
 
-	public Long getId() {
+	public UUID getId() {
 		return this.id;
 	}
 
@@ -72,7 +76,19 @@ public class Proposta {
 		this.status = status;
 	}
 	
+	public boolean cartaoFoiGerado() {
+		return this.cartao != null;
+	}
+	
 	public void setCartao(Cartao cartao) {
 		this.cartao = cartao;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+	
+	public String getEndereco() {
+		return this.endereco;
 	}
 }

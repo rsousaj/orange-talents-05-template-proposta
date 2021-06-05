@@ -5,13 +5,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import br.com.zup.orangetalents.proposta.dto.CartaoResponse;
+import br.com.zup.orangetalents.proposta.dto.response.CartaoResponse;
 import br.com.zup.orangetalents.proposta.model.Proposta;
 import br.com.zup.orangetalents.proposta.repository.PropostaRepository;
 import feign.FeignException;
@@ -43,10 +44,9 @@ public class AssociadorCartaoProposta {
 	
 	public void executa(Proposta proposta) {
 		try {
-			CartaoResponse cartaoResponse = consultaCartao.consulta(proposta.getId());
-			System.out.println(cartaoResponse);
+			CartaoResponse cartaoResponse = consultaCartao.consulta(proposta.getId().toString());
 			entityManager.persist(cartaoResponse.toModel(proposta));
-			
+
 		} catch (RetryableException ex) {
 			logger.error("Ocorreu um erro ao tentar consultar o Serviço de Cartões: {}", ex.getMessage());
 		} catch (FeignException ex) {
