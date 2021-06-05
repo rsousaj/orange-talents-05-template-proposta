@@ -38,11 +38,9 @@ public class AnaliseFinanceiraHealthIndicator implements HealthIndicator {
 			}
 			
 			details.put("reason", status.getReasonPhrase().toString());
-			
 			return Health.down().withDetails(details).build();
 		} catch (Exception ex) {
 			details.put("reason", ex.getMessage());
-			
 			return Health.down().withDetails(details).build();
 		}
 		
