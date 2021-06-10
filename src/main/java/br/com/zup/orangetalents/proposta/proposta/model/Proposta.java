@@ -25,8 +25,9 @@ public class Proposta {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(name = "id", columnDefinition = "BINARY(16)")
-	private UUID id;
+//	@Column(name = "id", columnDefinition = "BINARY(16)")
+//	private UUID id;
+	private String id;
 	
 	private @NotBlank @CPForCNPJ String documento;
 	private @NotBlank String email;
@@ -53,7 +54,7 @@ public class Proposta {
 		this.salario = salario;
 	}
 
-	public UUID getId() {
+	public String getId() {
 		return this.id;
 	}
 

@@ -17,6 +17,6 @@ public interface PropostaRepository extends JpaRepository<Proposta, UUID> {
 	@Query("SELECT p FROM Proposta p WHERE p.status = 'ELEGIVEL' AND p.cartao IS NULL")
 	List<Proposta> findByStatusIsElegivelAndCartaoIsNull();
 	
-	//Outra forma de fazer utilizando Derived Querys
+	// Outra forma de fazer utilizando Derived Querys
 	List<Proposta> findByStatusEqualsAndCartaoIsNull(StatusProposta status);
 }
