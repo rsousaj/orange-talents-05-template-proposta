@@ -2,13 +2,16 @@ package br.com.zup.orangetalents.proposta.proposta.service;
 
 import java.util.List;
 
-import org.hibernate.internal.build.AllowSysOut;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import br.com.zup.orangetalents.proposta.cartao.repository.CartaoRepository;
+import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
 import br.com.zup.orangetalents.proposta.proposta.dto.response.CartaoResponse;
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
 import br.com.zup.orangetalents.proposta.proposta.repository.PropostaRepository;
@@ -22,15 +25,15 @@ public class AssociadorCartaoProposta {
 	
 	private ConsultaCartao consultaCartao;
 	private PropostaRepository propostaRepository;
-	private CartaoRepository cartaoRepository;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	public AssociadorCartaoProposta(ConsultaCartao consultaCartao, 
-			PropostaRepository propostaRepository,
-			CartaoRepository cartaoRepository) {
+			PropostaRepository propostaRepository) {
 		
 		this.consultaCartao = consultaCartao;
 		this.propostaRepository = propostaRepository;
-		this.cartaoRepository = cartaoRepository;
 	}
 
 	@Scheduled(fixedDelayString = "${servico.cartoes.periodicidade}")
@@ -40,11 +43,14 @@ public class AssociadorCartaoProposta {
 		propostasAguardandoCartao.forEach(this::executa);
 	}
 	
+	@Transactional
 	public void executa(Proposta proposta) {
 		try {
 			CartaoResponse cartaoResponse = consultaCartao.consulta(proposta.getId().toString());
-			cartaoRepository.save(cartaoResponse.toModel(proposta));
-
+			Cartao cartao = cartaoResponse.toModel(proposta);
+			proposta.associaCartao(cartao);
+			propostaRepository.save(proposta);
+			
 		} catch (RetryableException ex) {
 			logger.error("Ocorreu um erro ao tentar consultar o Serviço de Cartões: {}", ex.getMessage());
 		} catch (FeignException ex) {

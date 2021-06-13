@@ -3,6 +3,7 @@ package br.com.zup.orangetalents.proposta.proposta.model;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,13 +22,12 @@ import br.com.zup.orangetalents.proposta.commom.validation.CPForCNPJ;
 
 @Entity
 public class Proposta {
-
+	
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-//	@Column(name = "id", columnDefinition = "BINARY(16)")
-//	private UUID id;
-	private String id;
+	@Column(name = "id", columnDefinition = "BINARY(16)")
+	private UUID id;
 	
 	private @NotBlank @CPForCNPJ String documento;
 	private @NotBlank String email;
@@ -38,7 +38,7 @@ public class Proposta {
 	@Enumerated(EnumType.STRING)
 	private StatusProposta status;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Cartao cartao;
 	
 	@Deprecated
@@ -53,15 +53,15 @@ public class Proposta {
 		this.endereco = endereco;
 		this.salario = salario;
 	}
-
-	public String getId() {
-		return this.id;
-	}
-
+	
 	public String getNome() {
 		return this.nome;
 	}
 	
+	public UUID getId() {
+		return id;
+	}
+
 	public String getDocumento() {
 		return this.documento;
 	}
@@ -85,6 +85,10 @@ public class Proposta {
 	public void setCartao(Cartao cartao) {
 		this.cartao = cartao;
 	}
+	
+	public Cartao getCartao() {
+		return this.cartao;
+	}
 
 	public String getEmail() {
 		return this.email;
@@ -93,4 +97,41 @@ public class Proposta {
 	public String getEndereco() {
 		return this.endereco;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((documento == null) ? 0 : documento.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Proposta other = (Proposta) obj;
+		if (documento == null) {
+			if (other.documento != null)
+				return false;
+		} else if (!documento.equals(other.documento))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	public void associaCartao(Cartao cartao) {
+		this.cartao = cartao;
+	}
+	
+	
 }

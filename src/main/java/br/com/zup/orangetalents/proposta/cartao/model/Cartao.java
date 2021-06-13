@@ -41,20 +41,21 @@ public class Cartao {
 	@NotNull
 	private Proposta proposta;
 	
-	@OneToMany(mappedBy = "cartao", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "cartao", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Biometria> biometrias = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "cartao", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<Bloqueio> bloqueios = new ArrayList<>();
 	
 	@Deprecated
 	public Cartao() { }
 
 	public Cartao(@NotBlank String numeroCartao, @NotNull LocalDateTime dataEmissao, @NotBlank String nomeTitular,
 			@NotNull Proposta proposta) {
-		super();
 		this.numeroCartao = numeroCartao;
 		this.dataEmissao = dataEmissao;
 		this.nomeTitular = nomeTitular;
 		this.proposta = proposta;
-		proposta.setCartao(this);
 	}
 
 	public String getId() {
@@ -84,4 +85,17 @@ public class Cartao {
 	public List<Biometria> getBiometrias() {
 		return Collections.unmodifiableList(this.biometrias);
 	}
+
+	public boolean isBloqueado() {
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "Cartao [id=" + id + ", numeroCartao=" + numeroCartao + ", dataEmissao=" + dataEmissao + ", nomeTitular="
+				+ nomeTitular + ", proposta=" + proposta + ", biometrias=" + biometrias + ", bloqueios=" + bloqueios
+				+ "]";
+	}
+	
+	
 }
