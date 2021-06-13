@@ -1,4 +1,4 @@
-package br.com.zup.orangetalents.proposta.cartao.dto;
+package br.com.zup.orangetalents.proposta.cartao.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;

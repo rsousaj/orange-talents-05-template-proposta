@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.zup.orangetalents.proposta.cartao.dto.BiometriaRequest;
+import br.com.zup.orangetalents.proposta.cartao.dto.request.BiometriaRequest;
 import br.com.zup.orangetalents.proposta.cartao.model.Biometria;
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
 import br.com.zup.orangetalents.proposta.cartao.repository.CartaoRepository;

@@ -38,4 +38,8 @@ public class Bloqueio {
 		this.ipAddress = ipAddress;
 		this.cartao = cartao;
 	}
+	
+	public Long getId() {
+		return this.id;
+	}
 }

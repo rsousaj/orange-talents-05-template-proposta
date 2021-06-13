@@ -10,6 +10,6 @@ import br.com.zup.orangetalents.proposta.proposta.dto.response.CartaoResponse;
 @FeignClient(name = "consultaCartao", url = "${servico.cartoes}")
 public interface ConsultaCartao {
 
-	@RequestMapping(value = "${servico.cartoes.consulta}", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	CartaoResponse consulta(@RequestParam String idProposta);
 }

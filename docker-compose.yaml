@@ -75,7 +75,7 @@ services:
       PROPOSTA_DATASOURCE_USERNAME: "userproposta"
       PROPOSTA_DATASOURCE_PASSWORD: "password"
       SERVICO_ANALISE: "http://analise:9999/"
-      SERVICO_CARTOES: "http://contas:8888/"
+      SERVICO_CARTOES: "http://contas:8888/api/cartoes"
       HEALTH_ENDPOINT_EXPOSURE_INCLUDE: "health"
       KEYCLOAK_ISSUER_URI: "http://keycloak:8080/auth/realms/cartolandia"
       KEYCLOAK_JWKS_URI: "http://keycloak:8080/auth/realms/cartolandia/protocol/openid-connect/certs"

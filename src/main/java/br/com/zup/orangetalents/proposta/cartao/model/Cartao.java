@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.util.Assert;
 
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
 
@@ -47,6 +50,10 @@ public class Cartao {
 	@OneToMany(mappedBy = "cartao", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Bloqueio> bloqueios = new ArrayList<>();
 	
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private StatusCartao status;
+	
 	@Deprecated
 	public Cartao() { }
 
@@ -56,6 +63,7 @@ public class Cartao {
 		this.dataEmissao = dataEmissao;
 		this.nomeTitular = nomeTitular;
 		this.proposta = proposta;
+		this.status = StatusCartao.ATIVO;
 	}
 
 	public String getId() {
@@ -87,7 +95,9 @@ public class Cartao {
 	}
 
 	public boolean isBloqueado() {
-		return false;
+		Assert.state(this.status != null, "O cartão deve possuir um Status.");
+		
+		return this.status.equals(StatusCartao.BLOQUEADO);
 	}
 
 	@Override
@@ -95,6 +105,14 @@ public class Cartao {
 		return "Cartao [id=" + id + ", numeroCartao=" + numeroCartao + ", dataEmissao=" + dataEmissao + ", nomeTitular="
 				+ nomeTitular + ", proposta=" + proposta + ", biometrias=" + biometrias + ", bloqueios=" + bloqueios
 				+ "]";
+	}
+
+	public void bloqueia() {
+		this.status = StatusCartao.BLOQUEADO;
+	}
+	
+	public void desbloqueia() {
+		this.status = StatusCartao.ATIVO;
 	}
 	
 	
