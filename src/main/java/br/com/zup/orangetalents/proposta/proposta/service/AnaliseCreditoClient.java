@@ -9,8 +9,8 @@ import br.com.zup.orangetalents.proposta.proposta.dto.request.SolicitacaoAnalise
 import br.com.zup.orangetalents.proposta.proposta.dto.response.ResultadoAnalise;
 
 @FeignClient(name = "analiseCredito", url = "${servico.analise}")
-public interface AnaliseCredito {
+public interface AnaliseCreditoClient {
 
 	@RequestMapping(value = "${servico.analise.solicitacao}", method = RequestMethod.POST)
-	public ResultadoAnalise solictaAnalise(@RequestBody SolicitacaoAnaliseRequest solicitaoAnalise);
+	public ResultadoAnalise solicitaAnalise(@RequestBody SolicitacaoAnaliseRequest solicitaoAnalise);
 }

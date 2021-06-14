@@ -22,7 +22,8 @@ import br.com.zup.orangetalents.proposta.proposta.dto.request.SolicitacaoAnalise
 import br.com.zup.orangetalents.proposta.proposta.dto.response.ResultadoAnalise;
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
 import br.com.zup.orangetalents.proposta.proposta.repository.PropostaRepository;
-import br.com.zup.orangetalents.proposta.proposta.service.AnaliseCredito;
+import br.com.zup.orangetalents.proposta.proposta.service.AnaliseCreditoClient;
+import br.com.zup.orangetalents.proposta.proposta.service.AnalisadorProposta;
 import feign.FeignException;
 import feign.FeignException.UnprocessableEntity;
 
@@ -33,21 +34,21 @@ public class NovaPropostaController {
 	private final Logger logger = LoggerFactory.getLogger(NovaPropostaController.class);
 	
 	private PropostaRepository propostaRepository;
-	private AnaliseCredito analiseCredito;
+	private AnalisadorProposta analisadorProposta;
 	
 	@Value("${proposta.detalhe.uri}")
 	private String detalhePropostaUri;
 	
-	public NovaPropostaController(PropostaRepository propostaRepository, AnaliseCredito analiseCredito) {
+	public NovaPropostaController(PropostaRepository propostaRepository, AnalisadorProposta analisadorProposta) {
 		this.propostaRepository = propostaRepository;
-		this.analiseCredito = analiseCredito;
+		this.analisadorProposta = analisadorProposta;
 	}
 	
 	@PostMapping
 	public ResponseEntity<?> cadastra(@RequestBody @Valid NovaPropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) {	
 		Proposta proposta = criaProposta(propostaRequest);
 		
-		analisaProposta(proposta);
+		analisadorProposta.analisar(proposta);
 		propostaRepository.save(proposta);
 		
 		URI uri = uriBuilder.path(detalhePropostaUri).build(proposta.getId().toString());	
@@ -55,23 +56,14 @@ public class NovaPropostaController {
 	}
 	
 	private Proposta criaProposta(NovaPropostaRequest propostaRequest) {
-		 Optional<Proposta> proposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
+		 Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
 		 
-		 if (proposta.isPresent()) {
+		 if (possivelProposta.isPresent()) {
 			 throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Já existe proposta em análise para o CPF/CNPJ informado.");
 		 }
 		
-		 return propostaRepository.save(propostaRequest.toModel());
-	}
-	
-	private void analisaProposta(Proposta proposta) {
-		try {
-			ResultadoAnalise resultadoAnalise = analiseCredito.solictaAnalise(SolicitacaoAnaliseRequest.build(proposta));
-			proposta.setStatus(resultadoAnalise.getResultadoSolicitacao().getStatus());		
-		} catch (UnprocessableEntity ex) {
-			proposta.setNaoElegivel();
-		} catch (FeignException ex) {
-			logger.error("Ocorreu um erro ao fazer solicitação de análise de credito: {}", ex.getMessage());
-		}
+		 Proposta proposta = propostaRepository.save(propostaRequest.toModel());
+		 logger.info("Proposta {} criada com sucesso.", proposta.getId());
+		 return proposta;
 	}
 }
