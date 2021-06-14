@@ -10,7 +10,7 @@ import br.com.zup.orangetalents.proposta.cartao.dto.request.BloqueioRequest;
 import br.com.zup.orangetalents.proposta.cartao.dto.response.ResultadoBloqueio;
 
 @FeignClient(name = "bloqueiaCartao", url = "${servico.cartoes}")
-public interface BloqueiaCartaoClient {
+public interface BloqueioCartaoClient {
 
 	@RequestMapping(path = "${servico.cartoes.bloqueio}", method = RequestMethod.POST)
 	public ResultadoBloqueio bloqueia(@PathVariable("id") String idCartao, @RequestBody BloqueioRequest bloqueioRequest);

@@ -1,5 +1,7 @@
 package br.com.zup.orangetalents.proposta.cartao.controller;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,7 +21,7 @@ import br.com.zup.orangetalents.proposta.cartao.dto.response.ResultadoBloqueio;
 import br.com.zup.orangetalents.proposta.cartao.metrics.MetricasCartao;
 import br.com.zup.orangetalents.proposta.cartao.model.Bloqueio;
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
-import br.com.zup.orangetalents.proposta.cartao.service.BloqueiaCartaoClient;
+import br.com.zup.orangetalents.proposta.cartao.service.BloqueioCartaoClient;
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import feign.FeignException;
 
@@ -30,11 +32,11 @@ public class BloqueiaCartaoController {
 	private final Logger logger = LoggerFactory.getLogger(BloqueiaCartaoController.class);
 	
 	private EntityManager entityManager;
-	private BloqueiaCartaoClient bloqueiaCartao;
+	private BloqueioCartaoClient bloqueiaCartao;
 	private MetricasCartao metricasCartao;
 	private TransactionTemplate transactionTemplate;
 
-	public BloqueiaCartaoController(EntityManager entityManager, BloqueiaCartaoClient bloqueiaCartao,
+	public BloqueiaCartaoController(EntityManager entityManager, BloqueioCartaoClient bloqueiaCartao,
 			MetricasCartao metricasCartao, TransactionTemplate transactionTemplate) {
 		this.entityManager = entityManager;
 		this.bloqueiaCartao = bloqueiaCartao;
@@ -57,7 +59,9 @@ public class BloqueiaCartaoController {
 			return ResponseEntity.unprocessableEntity().body("O cartão já encontra-se bloqueado.");
 		}
 
-		Bloqueio novoBloqueio = geraBloqueio(cartao, httpRequest);
+		Bloqueio novoBloqueio = geraBloqueio(cartao, httpRequest)
+				.orElseThrow(() -> new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível processar o bloqueio do cartão. Tente novamente mais tarde."));
+		
 		cartao.bloqueia();
 		transactionTemplate.executeWithoutResult((status) -> entityManager.persist(novoBloqueio));
 		metricasCartao.incrementaCartaoBloqueadoComSucesso();
@@ -65,18 +69,19 @@ public class BloqueiaCartaoController {
 		return ResponseEntity.ok().build();
 	}
 
-	private Bloqueio geraBloqueio(Cartao cartao, HttpServletRequest httpRequest) {
+	private Optional<Bloqueio> geraBloqueio(Cartao cartao, HttpServletRequest httpRequest) {
 		try {
 			ResultadoBloqueio resultado = bloqueiaCartao.bloqueia(cartao.getNumeroCartao(), BloqueioRequest.from("proposta"));
-			
+
 			String userAgent = httpRequest.getHeader("User-Agent");
 			String ip = httpRequest.getRemoteAddr();
-			return new Bloqueio(userAgent, ip, cartao);
 			
-		} catch (FeignException ex) {
+			return Optional.of(new Bloqueio(userAgent, ip, cartao));
+		} catch (FeignException ex) {	
 			metricasCartao.incrementaErroAoBloquearCartao();
 			logger.error("Não foi possível processar o bloqueio do cartão ID: {}...", cartao.getId().substring(0, 8));
-			throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível processar o bloqueio do cartão. Tente novamente mais tarde. Message: " + ex.getMessage());
+			
+			return Optional.empty();
 		}
 	}
 }

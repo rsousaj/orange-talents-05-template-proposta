@@ -37,6 +37,10 @@ public class AvisoViagemRequest {
 		
 		return new AvisoViagem(cartao, this.destino, this.dataTermino, ipRequisicao, userAgentRequisicao);
 	}
+	
+	public NotificacaoAvisoViagemRequest toNotificacaoRequest() {
+		return new NotificacaoAvisoViagemRequest(this.destino, this.dataTermino);
+	}
 
 	@Override
 	public String toString() {
