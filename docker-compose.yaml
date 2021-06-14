@@ -79,6 +79,8 @@ services:
       HEALTH_ENDPOINT_EXPOSURE_INCLUDE: "health"
       KEYCLOAK_ISSUER_URI: "http://keycloak:8080/auth/realms/cartolandia"
       KEYCLOAK_JWKS_URI: "http://keycloak:8080/auth/realms/cartolandia/protocol/openid-connect/certs"
+      NOME_APLICACAO: "SisProps"
+      AMBIENTE: "QA"
     depends_on:
       - db
 

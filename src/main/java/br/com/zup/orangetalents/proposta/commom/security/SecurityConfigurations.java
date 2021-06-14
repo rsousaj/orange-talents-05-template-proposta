@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 	
@@ -24,7 +25,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, uriCartoes + "/**").hasAuthority("SCOPE_cartoes:write")
 				.anyRequest().authenticated()
 			)
-			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+			.csrf().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 }

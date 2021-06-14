@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import br.com.zup.orangetalents.proposta.cartao.validation.Base64;
@@ -20,7 +21,7 @@ public class Biometria {
 	private String impressaoDigital;
 	
 	@ManyToOne(optional = false)
-	@NotNull
+	@NotNull @Valid
 	private Cartao cartao;
 	
 	@Deprecated
