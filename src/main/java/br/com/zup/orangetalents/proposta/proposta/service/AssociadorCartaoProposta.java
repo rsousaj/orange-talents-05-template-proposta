@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
+import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.proposta.dto.response.CartaoResponse;
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
 import br.com.zup.orangetalents.proposta.proposta.repository.PropostaRepository;
@@ -23,16 +24,12 @@ public class AssociadorCartaoProposta {
 
 	private final Logger logger = LoggerFactory.getLogger(AssociadorCartaoProposta.class);
 	
-	private ConsultaCartao consultaCartao;
+	private CartoesClient cartoes;
 	private PropostaRepository propostaRepository;
 	
-	@PersistenceContext
-	private EntityManager entityManager;
-	
-	public AssociadorCartaoProposta(ConsultaCartao consultaCartao, 
-			PropostaRepository propostaRepository) {
-		
-		this.consultaCartao = consultaCartao;
+	public AssociadorCartaoProposta(CartoesClient cartoes, PropostaRepository propostaRepository,
+			EntityManager entityManager) {
+		this.cartoes = cartoes;
 		this.propostaRepository = propostaRepository;
 	}
 
@@ -46,7 +43,7 @@ public class AssociadorCartaoProposta {
 	@Transactional
 	public void executa(Proposta proposta) {
 		try {
-			CartaoResponse cartaoResponse = consultaCartao.consulta(proposta.getId().toString());
+			CartaoResponse cartaoResponse = cartoes.consulta(proposta.getId().toString());
 			Cartao cartao = cartaoResponse.toModel(proposta);
 			proposta.associaCartao(cartao);
 			propostaRepository.save(proposta);

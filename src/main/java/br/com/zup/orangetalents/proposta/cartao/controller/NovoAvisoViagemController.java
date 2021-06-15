@@ -2,17 +2,13 @@ package br.com.zup.orangetalents.proposta.cartao.controller;
 
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.util.Optionals;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +22,7 @@ import br.com.zup.orangetalents.proposta.cartao.model.AvisoViagem;
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
 import br.com.zup.orangetalents.proposta.cartao.repository.AvisoViagemRepository;
 import br.com.zup.orangetalents.proposta.cartao.repository.CartaoRepository;
-import br.com.zup.orangetalents.proposta.cartao.service.AvisoViagemClient;
+import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import feign.FeignException;
 
@@ -36,15 +32,15 @@ public class NovoAvisoViagemController {
 
 	private final Logger logger = LoggerFactory.getLogger(NovoAvisoViagemController.class);
 
-	private AvisoViagemClient avisoViagemClient;
+	private CartoesClient cartoes;
 	private CartaoRepository cartaoRepository;
 	private AvisoViagemRepository avisoViagemRepository;
 	private MetricasCartao metricasCartao;
 
-	public NovoAvisoViagemController(AvisoViagemClient avisoViagemClient, CartaoRepository cartaoRepository,
+	public NovoAvisoViagemController(CartoesClient cartoesClient, CartaoRepository cartaoRepository,
 			AvisoViagemRepository avisoViagemRepository, MetricasCartao metricasCartao) {
 		
-		this.avisoViagemClient = avisoViagemClient;
+		this.cartoes = cartoesClient;
 		this.cartaoRepository = cartaoRepository;
 		this.avisoViagemRepository = avisoViagemRepository;
 		this.metricasCartao = metricasCartao;
@@ -66,7 +62,6 @@ public class NovoAvisoViagemController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível processar a requisição de aviso viagem. Tente novamente mais tarde.");
 		}
 
-
 		avisoViagemRepository.save(avisoViagem.get());
 		metricasCartao.incrementaAvisoViagemComSucesso();
 
@@ -76,7 +71,7 @@ public class NovoAvisoViagemController {
 	private Optional<AvisoViagem> geraAvisoViagem(Cartao cartao, AvisoViagemRequest avisoRequest,
 			HttpServletRequest httpRequest) {
 		try {
-			AvisoViagemResponse response = avisoViagemClient.cria(cartao.getNumeroCartao(), avisoRequest.toNotificacaoRequest());
+			AvisoViagemResponse response = cartoes.criaAvisoViagem(cartao.getNumeroCartao(), avisoRequest.toNotificacaoRequest());
 
 			if (response.getResultado().toUpperCase().equals("CRIADO")) {
 				String ip = httpRequest.getRemoteAddr();

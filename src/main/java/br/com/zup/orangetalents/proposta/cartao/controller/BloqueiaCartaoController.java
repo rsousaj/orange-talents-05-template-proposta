@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +20,7 @@ import br.com.zup.orangetalents.proposta.cartao.dto.response.ResultadoBloqueio;
 import br.com.zup.orangetalents.proposta.cartao.metrics.MetricasCartao;
 import br.com.zup.orangetalents.proposta.cartao.model.Bloqueio;
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
-import br.com.zup.orangetalents.proposta.cartao.service.BloqueioCartaoClient;
+import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import feign.FeignException;
 
@@ -32,14 +31,14 @@ public class BloqueiaCartaoController {
 	private final Logger logger = LoggerFactory.getLogger(BloqueiaCartaoController.class);
 	
 	private EntityManager entityManager;
-	private BloqueioCartaoClient bloqueiaCartao;
+	private CartoesClient cartoes;
 	private MetricasCartao metricasCartao;
 	private TransactionTemplate transactionTemplate;
 
-	public BloqueiaCartaoController(EntityManager entityManager, BloqueioCartaoClient bloqueiaCartao,
+	public BloqueiaCartaoController(EntityManager entityManager, CartoesClient cartoesClient,
 			MetricasCartao metricasCartao, TransactionTemplate transactionTemplate) {
 		this.entityManager = entityManager;
-		this.bloqueiaCartao = bloqueiaCartao;
+		this.cartoes = cartoesClient;
 		this.metricasCartao = metricasCartao;
 		this.transactionTemplate = transactionTemplate;
 	}
@@ -71,7 +70,7 @@ public class BloqueiaCartaoController {
 
 	private Optional<Bloqueio> geraBloqueio(Cartao cartao, HttpServletRequest httpRequest) {
 		try {
-			ResultadoBloqueio resultado = bloqueiaCartao.bloqueia(cartao.getNumeroCartao(), BloqueioRequest.from("proposta"));
+			ResultadoBloqueio resultado = cartoes.bloqueiaCartao(cartao.getNumeroCartao(), BloqueioRequest.from("proposta"));
 
 			String userAgent = httpRequest.getHeader("User-Agent");
 			String ip = httpRequest.getRemoteAddr();
