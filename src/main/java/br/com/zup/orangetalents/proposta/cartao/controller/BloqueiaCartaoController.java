@@ -44,7 +44,7 @@ public class BloqueiaCartaoController {
 	}
 
 	@PostMapping(value = "${proposta.cartao.bloqueio.uri}")
-	public ResponseEntity<?> bloqueia(@PathVariable("idCartao") String idCartao, HttpServletRequest httpRequest) {
+	public ResponseEntity<?> bloqueia(@PathVariable String idCartao, HttpServletRequest httpRequest) {
 
 		Cartao cartao = entityManager.find(Cartao.class, idCartao);
 		

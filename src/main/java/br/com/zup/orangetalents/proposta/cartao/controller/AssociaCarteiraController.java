@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.zup.orangetalents.proposta.cartao.dto.request.AssociaCarteiraRequest;
 import br.com.zup.orangetalents.proposta.cartao.dto.response.AssociaCarteiraResponse;
+import br.com.zup.orangetalents.proposta.cartao.metrics.MetricasCartao;
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
 import br.com.zup.orangetalents.proposta.cartao.model.Carteira;
 import br.com.zup.orangetalents.proposta.cartao.repository.CartaoRepository;
@@ -40,21 +41,22 @@ public class AssociaCarteiraController {
 	private final CarteiraRepository carteiraRepository;
 	private final CartaoRepository cartaoRepository;
 	private final CartoesClient cartoes;
+	private final MetricasCartao metricas;
 
 	@Value("${proposta.cartao.carteirashabilitadas}")
 	private Set<String> carteirasHabilitadas;
 
 	public AssociaCarteiraController(CarteiraRepository carteiraRepository, CartaoRepository cartaoRepository,
-			CartoesClient cartoes) {
+			CartoesClient cartoes, MetricasCartao metricas) {
 		this.carteiraRepository = carteiraRepository;
 		this.cartaoRepository = cartaoRepository;
 		this.cartoes = cartoes;
+		this.metricas = metricas;
 	}
 
 	@PostMapping(path = "${proposta.cartao.carteira.uri}")
-	public ResponseEntity<?> associa(@PathVariable("idCartao") String idCartao,
-			@PathVariable("carteira") String carteira, @RequestBody @NotNull @NotBlank @Email String email,
-			UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> associa(@PathVariable String idCartao, @PathVariable("carteira") String carteira,
+			@RequestBody @NotNull @NotBlank @Email String email, UriComponentsBuilder uriBuilder) {
 
 		if (!existeCarteiraDigital(carteira)) {
 			throw new ApiException(HttpStatus.BAD_REQUEST, "Carteira inexistente!");
@@ -66,16 +68,18 @@ public class AssociaCarteiraController {
 		Optional<Carteira> possivelCarteira = carteiraRepository.findByCartao_IdAndNomeCarteira(idCartao, carteira);
 
 		if (possivelCarteira.isPresent()) {
-			return ResponseEntity.badRequest().body("Este cartão já foi associada a Carteira.");
+			return ResponseEntity.unprocessableEntity().body("Este cartão já foi associada a Carteira.");
 		}
 
 		if (!associaCarteiraDigital(cartao, carteira, email)) {
+			metricas.incrementaAssociaCartaoComErro();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("Não foi possível fazer a associação. Tente novamente mais tarde.");
 		}
 
 		carteiraRepository.save(new Carteira(carteira, cartao));
-
+		metricas.incrementaAssociaCartaoComSucesso();
+		
 		URI uri = uriBuilder.path("/api/cartoes/{idCartao}/carteiras/{carteira}").build().toUri();
 		return ResponseEntity.created(uri).build();
 	}

@@ -12,6 +12,8 @@ public class MetricasCartao {
 	private Counter contadorCartaoErroBloquear;
 	private Counter contadorCartaoAvisoViagemComSucesso;
 	private Counter contadorCartaoErroAvisoViagem;
+	private Counter contadorCartaoAssociaCarteiraSucesso;
+	private Counter contadorCartaoErroAssociaCarteira;
 
 	public MetricasCartao(MeterRegistry meterRegistry) {
 		inicializaMetrics(meterRegistry);
@@ -33,6 +35,14 @@ public class MetricasCartao {
 		this.contadorCartaoErroAvisoViagem.increment();
 	}
 	
+	public void incrementaAssociaCartaoComSucesso() {
+		this.contadorCartaoAssociaCarteiraSucesso.increment();
+	}
+	
+	public void incrementaAssociaCartaoComErro() {
+		this.contadorCartaoErroAssociaCarteira.increment();
+	}
+	
 	private void inicializaMetrics(MeterRegistry meterRegistry) {
 		this.contadorCartaoBloqueadoComSucesso = Counter.builder("bloqueio.cartao")
 				.tag("estado", "sucesso")
@@ -47,6 +57,14 @@ public class MetricasCartao {
 				.register(meterRegistry);
 		
 		this.contadorCartaoErroAvisoViagem = Counter.builder("aviso.viagem")
+				.tag("estado", "erro")
+				.register(meterRegistry);
+		
+		this.contadorCartaoAssociaCarteiraSucesso = Counter.builder("associa.carteira")
+				.tag("estado", "sucesso")
+				.register(meterRegistry);
+		
+		this.contadorCartaoErroAssociaCarteira = Counter.builder("associa.carteira")
 				.tag("estado", "erro")
 				.register(meterRegistry);
 	}

@@ -47,7 +47,7 @@ public class NovoAvisoViagemController {
 	}
 
 	@PostMapping(value = "${proposta.cartao.viagem.uri}")
-	public ResponseEntity<?> cadastra(@PathVariable("idCartao") String idCartao,
+	public ResponseEntity<?> cadastra(@PathVariable String idCartao,
 			@RequestBody @Valid AvisoViagemRequest avisoRequest, HttpServletRequest httpRequest) {
 		Cartao cartao = cartaoRepository.findById(idCartao).orElseThrow(() -> {
 			logger.error("Cartão {}... não encontrado", idCartao.substring(0, 8));
