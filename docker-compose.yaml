@@ -29,7 +29,7 @@ services:
       - 5432:5432
     environment:
       POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       POSTGRES_DB: keycloak
       POSTGRES_HOST: postgres
 
@@ -57,9 +57,9 @@ services:
       DB_PORT: 5432
       DB_DATABASE: keycloak
       DB_USER: keycloak
-      DB_PASSWORD: password
+      DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
       KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       POSTGRES_PORT_5432_TCP_ADDR: 127.0.0.1
       KEYCLOAK_FRONTEND_URL: http://keycloak:8080/auth
 
@@ -73,7 +73,7 @@ services:
     environment:
       PROPOSTA_DATASOURCE_URL: "jdbc:mysql://db:3306/proposta"
       PROPOSTA_DATASOURCE_USERNAME: "userproposta"
-      PROPOSTA_DATASOURCE_PASSWORD: "password"
+      PROPOSTA_DATASOURCE_PASSWORD: ${PROPOSTA_DATASOURCE_PASSWORD}
       SERVICO_ANALISE: "http://analise:9999/"
       SERVICO_CARTOES: "http://contas:8888/api/cartoes"
       HEALTH_ENDPOINT_EXPOSURE_INCLUDE: "health"
@@ -92,8 +92,8 @@ services:
     environment:
       MYSQL_DATABASE: proposta
       MYSQL_USER: userproposta
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: ${PROPOSTA_DATASOURCE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 3307:3306
 
@@ -165,8 +165,8 @@ services:
     ports:
       - 8200:8200
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: ee413645-dbe8-4848-afc6-6bb2768ada75
-      VAULT_TOKEN: ee413645-dbe8-4848-afc6-6bb2768ada75
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID}
+      VAULT_TOKEN: ${VAULT_TOKEN}
       VAULT_ADDR: http://127.0.0.1:8200
 
   analise:
