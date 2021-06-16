@@ -78,6 +78,7 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-oauth2-jose</artifactId>
 		</dependency>
+
 		
 		<dependency>
 			<groupId>io.opentracing.contrib</groupId>

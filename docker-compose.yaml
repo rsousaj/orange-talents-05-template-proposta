@@ -76,7 +76,7 @@ services:
       PROPOSTA_DATASOURCE_PASSWORD: ${PROPOSTA_DATASOURCE_PASSWORD}
       SERVICO_ANALISE: "http://analise:9999/"
       SERVICO_CARTOES: "http://contas:8888/api/cartoes"
-      HEALTH_ENDPOINT_EXPOSURE_INCLUDE: "health"
+      HEALTH_ENDPOINT_EXPOSURE_INCLUDE: "health,prometheus"
       KEYCLOAK_ISSUER_URI: "http://keycloak:8080/auth/realms/cartolandia"
       KEYCLOAK_JWKS_URI: "http://keycloak:8080/auth/realms/cartolandia/protocol/openid-connect/certs"
       NOME_APLICACAO: "SisProps"
@@ -146,8 +146,9 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
+     - ./prometheus.yml:/etc/prometheus/prometheus.yml
      - prometheus-volume:/etc/prometheus/
-    network_mode: bridge
+    #network_mode: bridge
     ports:
       - "9090:9090"
 
@@ -155,7 +156,7 @@ services:
     image: grafana/grafana
     volumes:
       - grafana-volume:/var/lib/grafana
-    network_mode: bridge
+    #network_mode: bridge
     ports:
       - "3000:3000"
     depends_on:

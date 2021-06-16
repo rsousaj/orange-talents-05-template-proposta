@@ -18,14 +18,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import br.com.zup.orangetalents.proposta.proposta.dto.request.NovaPropostaRequest;
-import br.com.zup.orangetalents.proposta.proposta.dto.request.SolicitacaoAnaliseRequest;
-import br.com.zup.orangetalents.proposta.proposta.dto.response.ResultadoAnalise;
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
 import br.com.zup.orangetalents.proposta.proposta.repository.PropostaRepository;
-import br.com.zup.orangetalents.proposta.proposta.service.AnaliseCreditoClient;
 import br.com.zup.orangetalents.proposta.proposta.service.AnalisadorProposta;
-import feign.FeignException;
-import feign.FeignException.UnprocessableEntity;
 
 @RestController
 @RequestMapping(value = "${proposta.proposta.uri}")
