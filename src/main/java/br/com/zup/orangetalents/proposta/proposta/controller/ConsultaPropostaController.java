@@ -29,9 +29,6 @@ public class ConsultaPropostaController {
 		Proposta proposta = propostaRepository.findById(UUID.fromString(id))
 				.orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Proposta não localizada."));
 		
-//		Proposta proposta = propostaRepository.findById(Long.parseLong(id))
-//				.orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Proposta não localizada."));
-		
 		return ResponseEntity.ok().body(DetalhePropostaResponse.build(proposta));
 	}
 	

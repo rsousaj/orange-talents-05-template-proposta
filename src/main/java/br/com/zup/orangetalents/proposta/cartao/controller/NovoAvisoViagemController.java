@@ -25,6 +25,7 @@ import br.com.zup.orangetalents.proposta.cartao.repository.CartaoRepository;
 import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import feign.FeignException;
+import io.opentracing.Tracer;
 
 @RestController
 @RequestMapping(value = "${proposta.cartao.uri}")
@@ -36,14 +37,19 @@ public class NovoAvisoViagemController {
 	private CartaoRepository cartaoRepository;
 	private AvisoViagemRepository avisoViagemRepository;
 	private MetricasCartao metricasCartao;
+	private Tracer tracer;
 
-	public NovoAvisoViagemController(CartoesClient cartoesClient, CartaoRepository cartaoRepository,
-			AvisoViagemRepository avisoViagemRepository, MetricasCartao metricasCartao) {
+	public NovoAvisoViagemController(CartoesClient cartoesClient, 
+			CartaoRepository cartaoRepository,
+			AvisoViagemRepository avisoViagemRepository, 
+			MetricasCartao metricasCartao,
+			Tracer tracer) {
 		
 		this.cartoes = cartoesClient;
 		this.cartaoRepository = cartaoRepository;
 		this.avisoViagemRepository = avisoViagemRepository;
 		this.metricasCartao = metricasCartao;
+		this.tracer = tracer;
 	}
 
 	@PostMapping(value = "${proposta.cartao.viagem.uri}")
@@ -70,6 +76,8 @@ public class NovoAvisoViagemController {
 
 	private Optional<AvisoViagem> geraAvisoViagem(Cartao cartao, AvisoViagemRequest avisoRequest,
 			HttpServletRequest httpRequest) {
+		tracer.activeSpan().setBaggageItem("titular-cartao", cartao.getNomeTitular());
+		
 		try {
 			AvisoViagemResponse response = cartoes.criaAvisoViagem(cartao.getNumeroCartao(), avisoRequest.toNotificacaoRequest());
 

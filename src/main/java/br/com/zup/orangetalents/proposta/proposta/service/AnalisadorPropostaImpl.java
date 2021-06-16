@@ -11,6 +11,7 @@ import feign.FeignException;
 import feign.FeignException.UnprocessableEntity;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.opentracing.Tracer;
 
 @Component
 public class AnalisadorPropostaImpl implements AnalisadorProposta {
@@ -21,13 +22,18 @@ public class AnalisadorPropostaImpl implements AnalisadorProposta {
 	private Counter contadorAnaliseCreditoElegivel;
 	private Counter contadorAnaliseCreditoNaoElegivel;
 	private Counter contadorAnaliseCreditoFalha;
+	private Tracer tracer;
 
-	public AnalisadorPropostaImpl(AnaliseCreditoClient analiseCredito, MeterRegistry meterRegistry) {
+	public AnalisadorPropostaImpl(AnaliseCreditoClient analiseCredito, MeterRegistry meterRegistry, Tracer tracer) {
 		this.analiseCredito = analiseCredito;
+		this.tracer = tracer;
 		inicializaMetricas(meterRegistry);
 	}
 
 	public void analisar(Proposta proposta) {
+		tracer.activeSpan().setTag("email", proposta.getEmail());
+		tracer.activeSpan().setBaggageItem("proposta-id", proposta.getId().toString());
+		
 		try {
 			ResultadoAnalise resultadoAnalise = analiseCredito.solicitaAnalise(SolicitacaoAnaliseRequest.build(proposta));
 			proposta.setStatus(resultadoAnalise.getResultadoSolicitacao().getStatus());

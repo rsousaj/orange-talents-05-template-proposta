@@ -31,6 +31,7 @@ import br.com.zup.orangetalents.proposta.cartao.repository.CarteiraRepository;
 import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import feign.FeignException;
+import io.opentracing.Tracer;
 
 @RestController
 @RequestMapping(value = "${proposta.cartao.uri}")
@@ -42,16 +43,22 @@ public class AssociaCarteiraController {
 	private final CartaoRepository cartaoRepository;
 	private final CartoesClient cartoes;
 	private final MetricasCartao metricas;
+	private final Tracer tracer;
 
 	@Value("${proposta.cartao.carteirashabilitadas}")
 	private Set<String> carteirasHabilitadas;
 
-	public AssociaCarteiraController(CarteiraRepository carteiraRepository, CartaoRepository cartaoRepository,
-			CartoesClient cartoes, MetricasCartao metricas) {
+	public AssociaCarteiraController(CarteiraRepository carteiraRepository, 
+			CartaoRepository cartaoRepository,
+			CartoesClient cartoes, 
+			MetricasCartao metricas,
+			Tracer tracer) {
+		
 		this.carteiraRepository = carteiraRepository;
 		this.cartaoRepository = cartaoRepository;
 		this.cartoes = cartoes;
 		this.metricas = metricas;
+		this.tracer = tracer;
 	}
 
 	@PostMapping(path = "${proposta.cartao.carteira.uri}")
@@ -85,6 +92,8 @@ public class AssociaCarteiraController {
 	}
 
 	private boolean associaCarteiraDigital(Cartao cartao, String carteira, String email) {
+		tracer.activeSpan().setTag("carteira", carteira);
+		tracer.activeSpan().setBaggageItem("cartao-id", cartao.getId());
 		try {
 			AssociaCarteiraResponse response = cartoes.associaCarteira(cartao.getNumeroCartao(),
 					AssociaCarteiraRequest.from(email, carteira));

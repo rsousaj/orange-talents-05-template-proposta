@@ -23,6 +23,7 @@ import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
 import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.commom.exception.ApiException;
 import feign.FeignException;
+import io.opentracing.Tracer;
 
 @RestController
 @RequestMapping(value = "${proposta.cartao.uri}")
@@ -34,13 +35,19 @@ public class BloqueiaCartaoController {
 	private CartoesClient cartoes;
 	private MetricasCartao metricasCartao;
 	private TransactionTemplate transactionTemplate;
+	private Tracer tracer;
 
-	public BloqueiaCartaoController(EntityManager entityManager, CartoesClient cartoesClient,
-			MetricasCartao metricasCartao, TransactionTemplate transactionTemplate) {
+	public BloqueiaCartaoController(EntityManager entityManager, 
+			CartoesClient cartoesClient,
+			MetricasCartao metricasCartao, 
+			TransactionTemplate transactionTemplate,
+			Tracer tracer) {
+		
 		this.entityManager = entityManager;
 		this.cartoes = cartoesClient;
 		this.metricasCartao = metricasCartao;
 		this.transactionTemplate = transactionTemplate;
+		this.tracer = tracer;
 	}
 
 	@PostMapping(value = "${proposta.cartao.bloqueio.uri}")
@@ -69,6 +76,7 @@ public class BloqueiaCartaoController {
 	}
 
 	private Optional<Bloqueio> geraBloqueio(Cartao cartao, HttpServletRequest httpRequest) {
+		tracer.activeSpan().setBaggageItem("cartao-id", cartao.getId());
 		try {
 			ResultadoBloqueio resultado = cartoes.bloqueiaCartao(cartao.getNumeroCartao(), BloqueioRequest.from("proposta"));
 
