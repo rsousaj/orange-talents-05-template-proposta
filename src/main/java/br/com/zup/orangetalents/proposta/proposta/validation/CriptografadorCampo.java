@@ -5,26 +5,23 @@ import javax.persistence.Converter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.encrypt.Encryptors;
-import org.springframework.security.crypto.encrypt.TextEncryptor;
 
 @Converter
 public class CriptografadorCampo implements AttributeConverter<String, String> {
-
-	private final TextEncryptor encryptor;
 	
-	public CriptografadorCampo(@Value("${database.criptografia.secret}") String secret,
-			@Value("${database.criptografia.salt}") String salt) {
-		
-		this.encryptor = Encryptors.queryableText(secret, salt);
-	}
+	@Value("${database.criptografia.secret}") 
+	private String secret;
+	
+	@Value("${database.criptografia.salt}") 
+	private String salt;
 	
 	@Override
 	public String convertToDatabaseColumn(String attribute) {
-		return encryptor.encrypt(attribute);
+		return Encryptors.queryableText(secret, salt).encrypt(attribute);
 	}
 
 	@Override
 	public String convertToEntityAttribute(String dbData) {
-		return encryptor.decrypt(dbData);
+		return Encryptors.queryableText(secret, salt).decrypt(dbData);
 	}
 }
