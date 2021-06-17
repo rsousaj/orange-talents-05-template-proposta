@@ -1,4 +1,4 @@
-package br.com.zup.orangetalents.proposta.commom.validation;
+package br.com.zup.orangetalents.proposta.proposta.validation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

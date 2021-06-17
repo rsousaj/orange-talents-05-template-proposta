@@ -6,11 +6,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import br.com.zup.orangetalents.proposta.commom.validation.CPForCNPJ;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
+import br.com.zup.orangetalents.proposta.proposta.validation.CPForCNPJ;
 
 public class NovaPropostaRequest {
 
+	private static final String SALT = "bdb2e0ff375d16cb";
+	
 	private @NotBlank @CPForCNPJ String documento;
 	private @NotBlank String email;
 	private @NotBlank String nome;
@@ -28,10 +33,17 @@ public class NovaPropostaRequest {
 	}
 
 	public Proposta toModel() {
-		return new Proposta(documento, email, nome, endereco, salario);
+		return new Proposta(this.getDocumento(), email, nome, endereco, salario);
 	}
 
 	public String getDocumento() {
 		return this.documento;
+//		Faz a cripto
+//		return this.criptografa(documento);
+	}
+	
+	public String criptografa(String documento) {
+		TextEncryptor encryptor = Encryptors.queryableText("documento", SALT);
+		return encryptor.encrypt(documento);
 	}
 }

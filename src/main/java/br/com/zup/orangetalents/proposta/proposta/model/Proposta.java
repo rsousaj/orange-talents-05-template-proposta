@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,7 +19,8 @@ import javax.validation.constraints.Positive;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
-import br.com.zup.orangetalents.proposta.commom.validation.CPForCNPJ;
+import br.com.zup.orangetalents.proposta.proposta.validation.CPForCNPJ;
+import br.com.zup.orangetalents.proposta.proposta.validation.CriptografadorCampo;
 
 @Entity
 public class Proposta {
@@ -29,7 +31,9 @@ public class Proposta {
 	@Column(name = "id", columnDefinition = "BINARY(16)")
 	private UUID id;
 	
-	private @NotBlank @CPForCNPJ String documento;
+	@Convert(converter = CriptografadorCampo.class)
+	private @NotBlank String documento;
+	
 	private @NotBlank String email;
 	private @NotBlank String nome;
 	private @NotBlank String endereco;
