@@ -147,6 +147,7 @@ services:
     image: prom/prometheus
     volumes:
      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+     - ./client-prometheus-keycloak-secret:/etc/prometheus/client-prometheus-keycloak-secret
      - prometheus-volume:/etc/prometheus/
     #network_mode: bridge
     ports:

@@ -8,8 +8,29 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['host.docker.internal:8081']
-
+      
+    oauth2:
+      client_id: sistemaproposta
+      client_secret_file: client-prometheus-keycloak-secret
+      
+      scopes:
+        - 'profile'
+      
+      token_url: "http://keycloak:8080/auth/realms/cartolandia/protocol/openid-connect/token"
+      endpoint_params:
+      
   - job_name: 'proposta-docker'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['proposta:8081']
+      
+    oauth2:
+      client_id: sistemaproposta
+      client_secret_file: client-prometheus-keycloak-secret
+      
+      scopes:
+        - 'profile'
+      
+      token_url: "http://keycloak:8080/auth/realms/cartolandia/protocol/openid-connect/token"
+      endpoint_params:
+      

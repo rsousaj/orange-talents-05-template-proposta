@@ -1,3 +1,4 @@
+client-prometheus-keycloak-secret
 .env
 HELP.md
 target/
