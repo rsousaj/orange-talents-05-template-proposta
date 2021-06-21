@@ -103,7 +103,7 @@ public class AssociaCarteiraController {
 			}
 		} catch (FeignException ex) {
 			logger.error("Não foi possível associar a o cartao de id {}... com a carteira {}",
-					cartao.getId().substring(0, 8), carteira);
+					cartao.getId(), carteira);
 			return false;
 		}
 		return false;

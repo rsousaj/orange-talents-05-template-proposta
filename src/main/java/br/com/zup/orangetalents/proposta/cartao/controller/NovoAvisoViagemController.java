@@ -63,7 +63,7 @@ public class NovoAvisoViagemController {
 		Optional<AvisoViagem> avisoViagem = geraAvisoViagem(cartao, avisoRequest, httpRequest);
 		
 		if (avisoViagem.isEmpty()) {
-			logger.error("Erro ao gerar aviso viagem para o cartão {}...", cartao.getId().substring(0, 8));
+			logger.error("Erro ao gerar aviso viagem para o cartão {}...", cartao.getId());
 			metricasCartao.incrementaAvisoViagemComErro();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível processar a requisição de aviso viagem. Tente novamente mais tarde.");
 		}
@@ -90,7 +90,7 @@ public class NovoAvisoViagemController {
 				return Optional.empty();
 			}
 		} catch (FeignException ex) {
-			logger.error("Não foi possível gerar o aviso viagem para o cargão {}... Causa: {}", cartao.getId().substring(0, 8), ex.getMessage());
+			logger.error("Não foi possível gerar o aviso viagem para o cargão {}... Causa: {}", cartao.getId(), ex.getMessage());
 			return Optional.empty();
 		}
 	}

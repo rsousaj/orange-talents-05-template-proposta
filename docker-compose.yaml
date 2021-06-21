@@ -128,6 +128,8 @@ services:
       LOG_LEVEL: INFO
       KAFKA_HOST: "kafka:29092"
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      #variavel de ambiente abaixo serve para definir o tempo que irá demorar pra gerar as transações (em milissegundos)
+      #TRANSACTION_DELAY 
 
   jaeger:
     image: jaegertracing/all-in-one

@@ -44,10 +44,15 @@ public class Cartao {
 	@NotNull
 	private Proposta proposta;
 	
-	@OneToMany(mappedBy = "cartao", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "cartao", 
+			fetch = FetchType.LAZY, 
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
 	private List<Biometria> biometrias = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "cartao", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "cartao", 
+			fetch = FetchType.LAZY, 
+			cascade = CascadeType.PERSIST)
 	private List<Bloqueio> bloqueios = new ArrayList<>();
 	
 	@Enumerated(EnumType.STRING)

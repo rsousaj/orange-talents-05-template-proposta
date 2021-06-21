@@ -56,12 +56,12 @@ public class BloqueiaCartaoController {
 		Cartao cartao = entityManager.find(Cartao.class, idCartao);
 		
 		if (cartao == null) {
-			logger.error("Cartão {}... não encontrado", idCartao.substring(0, 8));
+			logger.error("Cartão {}... não encontrado", idCartao);
 			throw new ApiException(HttpStatus.NOT_FOUND, "Cartão não encontrado.");
 		}
 
 		if (cartao.isBloqueado()) {
-			logger.info("Tentativa de bloqueio de cartão {}... não foi processada: cartão já encontra-se bloqueado.", idCartao.substring(0, 8));
+			logger.info("Tentativa de bloqueio de cartão {}... não foi processada: cartão já encontra-se bloqueado.", idCartao);
 			return ResponseEntity.unprocessableEntity().body("O cartão já encontra-se bloqueado.");
 		}
 
@@ -86,7 +86,7 @@ public class BloqueiaCartaoController {
 			return Optional.of(new Bloqueio(userAgent, ip, cartao));
 		} catch (FeignException ex) {	
 			metricasCartao.incrementaErroAoBloquearCartao();
-			logger.error("Não foi possível processar o bloqueio do cartão ID: {}...", cartao.getId().substring(0, 8));
+			logger.error("Não foi possível processar o bloqueio do cartão ID: {}...", cartao.getId());
 			
 			return Optional.empty();
 		}

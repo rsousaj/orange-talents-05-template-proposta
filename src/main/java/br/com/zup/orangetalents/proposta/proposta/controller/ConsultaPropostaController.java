@@ -26,10 +26,10 @@ public class ConsultaPropostaController {
 
 	@GetMapping(value = "${proposta.detalhe.uri}")
 	public ResponseEntity<DetalhePropostaResponse> consulta(@PathVariable("id") String id) {
-		Proposta proposta = propostaRepository.findById(UUID.fromString(id))
-				.orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Proposta não localizada."));
-		
-		return ResponseEntity.ok().body(DetalhePropostaResponse.build(proposta));
+		return propostaRepository.findById(UUID.fromString(id))
+				.map(DetalhePropostaResponse::build)
+				.map(dto -> ResponseEntity.ok().body(dto))
+				.orElse(ResponseEntity.notFound().build());
 	}
 	
 }

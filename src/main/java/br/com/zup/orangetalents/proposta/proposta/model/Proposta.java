@@ -1,6 +1,7 @@
 package br.com.zup.orangetalents.proposta.proposta.model;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;

@@ -6,12 +6,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.hibernate.internal.build.AllowSysOut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import br.com.zup.orangetalents.proposta.cartao.model.Cartao;
+import br.com.zup.orangetalents.proposta.cartao.repository.CartaoRepository;
 import br.com.zup.orangetalents.proposta.cartao.service.CartoesClient;
 import br.com.zup.orangetalents.proposta.proposta.dto.response.CartaoResponse;
 import br.com.zup.orangetalents.proposta.proposta.model.Proposta;
@@ -34,7 +37,7 @@ public class AssociadorCartaoProposta {
 	}
 
 	@Scheduled(fixedDelayString = "${servico.cartoes.periodicidade}")
-	public void executa() {
+	public void executa() {	
 		List<Proposta> propostasAguardandoCartao = propostaRepository.findByStatusIsElegivelAndCartaoIsNull();
 		
 		propostasAguardandoCartao.forEach(this::executa);
