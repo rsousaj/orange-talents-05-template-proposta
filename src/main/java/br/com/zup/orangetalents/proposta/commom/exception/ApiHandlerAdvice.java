@@ -29,7 +29,8 @@ public class ApiHandlerAdvice extends ResponseEntityExceptionHandler {
 		List<String> erros = new ArrayList<>();
 		
 		ex.getBindingResult().getGlobalErrors().forEach(globalError -> {
-			erros.add(globalError.getDefaultMessage());
+			String mensagem = messageSource.getMessage(globalError, LocaleContextHolder.getLocale());
+			erros.add(mensagem);
 		});
 
 		ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
